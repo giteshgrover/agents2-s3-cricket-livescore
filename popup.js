@@ -163,7 +163,7 @@ class CricketPopup {
         const subscribeBtn = matchElement.querySelector('.subscribe-btn');
         subscribeBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
-            await this.handleSubscription(match, subscribeBtn);
+            await this.handleSubscription(match, subscribeBtn, matchElement);
         });
 
         // Match selection for live scores
@@ -175,7 +175,7 @@ class CricketPopup {
         }
     }
 
-    async handleSubscription(match, button) {
+    async handleSubscription(match, button, matchElement) {
         try {
             if (match.isSubscribed) {
                 // Unsubscribe
