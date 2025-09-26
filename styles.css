@@ -152,6 +152,29 @@ body {
     background: #fff5f5;
 }
 
+.match-item.selected {
+    border: 2px solid #007bff;
+    background: #e3f2fd;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.match-item.selected.subscribed {
+    border-left: 4px solid #28a745;
+    background: #e8f5e8;
+    border-top: 2px solid #007bff;
+    border-right: 2px solid #007bff;
+    border-bottom: 2px solid #007bff;
+}
+
+.match-item.selected.live {
+    border-left: 4px solid #dc3545;
+    background: #ffe8e8;
+    border-top: 2px solid #007bff;
+    border-right: 2px solid #007bff;
+    border-bottom: 2px solid #007bff;
+}
+
 .match-header {
     display: flex;
     justify-content: space-between;
