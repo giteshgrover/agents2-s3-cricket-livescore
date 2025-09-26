@@ -348,7 +348,7 @@ body {
 }
 
 /* Responsive adjustments */
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
     body {
         width: 400px;
         height: 500px;
@@ -362,4 +362,4 @@ body {
         border-right: none;
         border-bottom: 1px solid #e0e0e0;
     }
-}
+} */

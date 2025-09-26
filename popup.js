@@ -85,7 +85,7 @@ class CricketPopup {
         const matchesWithStatus = [];
         
         for (const match of matches) {
-            const isSubscribed = await isMatchSubscribed(match.id);
+            const isSubscribed = await isMatchSubscribedFromStorage(match.id);
             matchesWithStatus.push({
                 ...match,
                 isSubscribed
@@ -179,7 +179,7 @@ class CricketPopup {
         try {
             if (match.isSubscribed) {
                 // Unsubscribe
-                const success = await unsubscribeFromMatch(match.id);
+                const success = await unsubscribeFromMatchFromStorage(match.id);
                 if (success) {
                     match.isSubscribed = false;
                     button.textContent = 'Subscribe';
@@ -193,7 +193,7 @@ class CricketPopup {
                 }
             } else {
                 // Subscribe
-                const success = await subscribeToMatch(match.id, match);
+                const success = await subscribeToMatchFromStorage(match.id, match);
                 if (success) {
                     match.isSubscribed = true;
                     button.textContent = 'Subscribed';

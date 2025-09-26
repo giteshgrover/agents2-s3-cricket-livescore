@@ -3,7 +3,7 @@
 const STORAGE_KEY = 'cricket_subscribed_matches';
 
 // Get all subscribed matches from Chrome storage
-async function getSubscribedMatches() {
+async function getSubscribedMatchesFromStorage() {
     return new Promise((resolve) => {
         chrome.storage.local.get([STORAGE_KEY], (result) => {
             const subscribedMatches = result[STORAGE_KEY] || [];
@@ -13,7 +13,7 @@ async function getSubscribedMatches() {
 }
 
 // Save subscribed matches to Chrome storage
-async function saveSubscribedMatches(subscribedMatches) {
+async function saveSubscribedMatchesFromStorage(subscribedMatches) {
     return new Promise((resolve) => {
         chrome.storage.local.set({ [STORAGE_KEY]: subscribedMatches }, () => {
             resolve();
@@ -22,8 +22,8 @@ async function saveSubscribedMatches(subscribedMatches) {
 }
 
 // Subscribe to a match
-async function subscribeToMatch(matchId, matchData) {
-    const subscribedMatches = await getSubscribedMatches();
+async function subscribeToMatchFromStorage(matchId, matchData) {
+    const subscribedMatches = await getSubscribedMatchesFromStorage();
     
     // Check if already subscribed
     const existingIndex = subscribedMatches.findIndex(match => match.id === matchId);
@@ -36,7 +36,7 @@ async function subscribeToMatch(matchId, matchData) {
             subscribedAt: new Date().toISOString()
         });
         
-        await saveSubscribedMatches(subscribedMatches);
+        await saveSubscribedMatchesFromStorage(subscribedMatches);
         return true; // Successfully subscribed
     }
     
@@ -44,13 +44,13 @@ async function subscribeToMatch(matchId, matchData) {
 }
 
 // Unsubscribe from a match
-async function unsubscribeFromMatch(matchId) {
-    const subscribedMatches = await getSubscribedMatches();
+async function unsubscribeFromMatchFromStorage(matchId) {
+    const subscribedMatches = await getSubscribedMatchesFromStorage();
     
     const filteredMatches = subscribedMatches.filter(match => match.id !== matchId);
     
     if (filteredMatches.length !== subscribedMatches.length) {
-        await saveSubscribedMatches(filteredMatches);
+        await saveSubscribedMatchesFromStorage(filteredMatches);
         return true; // Successfully unsubscribed
     }
     
@@ -58,14 +58,14 @@ async function unsubscribeFromMatch(matchId) {
 }
 
 // Check if a match is subscribed
-async function isMatchSubscribed(matchId) {
-    const subscribedMatches = await getSubscribedMatches();
+async function isMatchSubscribedFromStorage(matchId) {
+    const subscribedMatches = await getSubscribedMatchesFromStorage();
     return subscribedMatches.some(match => match.id === matchId);
 }
 
 // Get subscribed match data
-async function getSubscribedMatchData(matchId) {
-    const subscribedMatches = await getSubscribedMatches();
+async function getSubscribedMatchDataFromStorage(matchId) {
+    const subscribedMatches = await getSubscribedMatchesFromStorage();
     return subscribedMatches.find(match => match.id === matchId);
 }
 
@@ -75,14 +75,14 @@ async function clearAllSubscriptions() {
 }
 
 // Get subscription count
-async function getSubscriptionCount() {
-    const subscribedMatches = await getSubscribedMatches();
+async function getSubscriptionCountFromStorage() {
+    const subscribedMatches = await getSubscribedMatchesFromStorage();
     return subscribedMatches.length;
 }
 
 // Update match data for subscribed matches
-async function updateSubscribedMatchData(matchId, updatedData) {
-    const subscribedMatches = await getSubscribedMatches();
+async function updateSubscribedMatchDataFromStorage(matchId, updatedData) {
+    const subscribedMatches = await getSubscribedMatchesFromStorage();
     
     const matchIndex = subscribedMatches.findIndex(match => match.id === matchId);
     
@@ -93,7 +93,7 @@ async function updateSubscribedMatchData(matchId, updatedData) {
             lastUpdated: new Date().toISOString()
         };
         
-        await saveSubscribedMatches(subscribedMatches);
+        await saveSubscribedMatchesFromStorage(subscribedMatches);
         return true;
     }
     
@@ -101,23 +101,23 @@ async function updateSubscribedMatchData(matchId, updatedData) {
 }
 
 // Get all subscribed match IDs
-async function getSubscribedMatchIds() {
-    const subscribedMatches = await getSubscribedMatches();
+async function getSubscribedMatchIdsFromStorage() {
+    const subscribedMatches = await getSubscribedMatchesFromStorage();
     return subscribedMatches.map(match => match.id);
 }
 
 // Export functions for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        getSubscribedMatches,
-        saveSubscribedMatches,
-        subscribeToMatch,
-        unsubscribeFromMatch,
-        isMatchSubscribed,
-        getSubscribedMatchData,
+        getSubscribedMatchesFromStorage,
+        saveSubscribedMatchesFromStorage,
+        subscribeToMatchFromStorage,
+        unsubscribeFromMatchFromStorage,
+        isMatchSubscribedFromStorage,
+        getSubscribedMatchDataFromStorage,
         clearAllSubscriptions,
-        getSubscriptionCount,
-        updateSubscribedMatchData,
-        getSubscribedMatchIds
+        getSubscriptionCountFromStorage,
+        updateSubscribedMatchDataFromStorage,
+        getSubscribedMatchIdsFromStorage
     };
 }

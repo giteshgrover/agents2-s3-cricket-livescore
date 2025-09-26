@@ -57,7 +57,7 @@ class CricketOrchestrator {
     async getSubscribedMatches() {
         try {
             // Import storage functions dynamically
-            const subscribedMatches = await getSubscribedMatches();
+            const subscribedMatches = await getSubscribedMatchesFromStorage();
             
             // Sort subscribed matches: live matches first, then by subscription time
             return subscribedMatches.sort((a, b) => {
