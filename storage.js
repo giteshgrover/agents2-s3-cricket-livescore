@@ -58,10 +58,10 @@ async function unsubscribeFromMatchFromStorage(matchId) {
 }
 
 // Check if a match is subscribed
-async function isMatchSubscribedFromStorage(matchId) {
-    const subscribedMatches = await getSubscribedMatchesFromStorage();
-    return subscribedMatches.some(match => match.id === matchId);
-}
+// async function isMatchSubscribedFromStorage(matchId) {
+//     const subscribedMatches = await getSubscribedMatchesFromStorage();
+//     return subscribedMatches.some(match => match.id === matchId);
+// }
 
 // Get subscribed match data
 async function getSubscribedMatchDataFromStorage(matchId) {
@@ -113,7 +113,7 @@ if (typeof module !== 'undefined' && module.exports) {
         saveSubscribedMatchesFromStorage,
         subscribeToMatchFromStorage,
         unsubscribeFromMatchFromStorage,
-        isMatchSubscribedFromStorage,
+        // isMatchSubscribedFromStorage,
         getSubscribedMatchDataFromStorage,
         clearAllSubscriptions,
         getSubscriptionCountFromStorage,

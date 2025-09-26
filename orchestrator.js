@@ -37,12 +37,24 @@ class CricketOrchestrator {
             console.log(`📋 Found ${subscribedMatches.length} subscribed matches`);
             
             // Step 2: Get live scores for subscribed matches
-            const liveScores = await this.getLiveScoresForSubscribedMatches(subscribedMatches);
+            const liveScores = await this.getLiveScoresForMatches(subscribedMatches.filter(m => m.status === 'live').map(m => m.id));
             console.log(`⚡ Retrieved live scores for ${liveScores.length} matches`);
+
+            const allMatches = await getAllMatches();
+            console.log(`⚡ Retrieved all matches - ${allMatches.live.length} live matches and ${allMatches.upcoming.length} upcoming matches`);
+
+            // Combine with subscription status
+            const liveMatchesWithStatus = await this.addSubscriptionStatus(allMatches.live, subscribedMatches);
+            const upcomingMatchesWithStatus = await this.addSubscriptionStatus(allMatches.upcoming, subscribedMatches);
+
+            // Sort: subscribed matches first, then by time
+            const sortedLiveMatches = this.sortMatches(liveMatchesWithStatus);
+            const sortedUpcomingMatches = this.sortMatches(upcomingMatchesWithStatus);
             
             // Step 3: Process and return results
             return {
-                subscribedMatches,
+                liveMatches: sortedLiveMatches,
+                upcomingMatches: sortedUpcomingMatches,
                 liveScores,
                 timestamp: new Date().toISOString()
             };
@@ -51,6 +63,61 @@ class CricketOrchestrator {
             console.error('❌ Orchestration failed:', error);
             throw error;
         }
+    }
+
+    // Get live scores for matches
+    async getLiveScoresForMatches(liveMatchIds) {
+        const liveScores = [];
+        
+        for (const liveMatchId of liveMatchIds) {
+            try {
+                const liveScore = await getLiveScore(liveMatchId);
+                if (liveScore) {
+                    liveScores.push(liveScore);
+                }
+            } catch (error) {
+                console.error(`Error getting live score for match ${match.id}:`, error);
+            }
+        }
+        
+        return liveScores;
+    }
+
+    async unsubscribeMatch(match) {
+        return await unsubscribeFromMatchFromStorage(match.id);
+    }
+
+    async subscribeMatch(match) {
+        return await subscribeToMatchFromStorage(match.id, match);
+    }
+
+    sortMatches(matches) {
+        return matches.sort((a, b) => {
+            // Subscribed matches first
+            if (a.isSubscribed && !b.isSubscribed) return -1;
+            if (!a.isSubscribed && b.isSubscribed) return 1;
+            
+            // Then by status (live first)
+            if (a.status === 'live' && b.status !== 'live') return -1;
+            if (a.status !== 'live' && b.status === 'live') return 1;
+            
+            // Then by time
+            return new Date(a.startTime) - new Date(b.startTime);
+        });
+    }
+
+    async addSubscriptionStatus(matches, subscribedMatches) {
+        const matchesWithStatus = [];
+        
+        for (const match of matches) {
+            const isSubscribed =  subscribedMatches.some(subscribedMatch => subscribedMatch.id === match.id);
+            matchesWithStatus.push({
+                ...match,
+                isSubscribed
+            });
+        }
+        
+        return matchesWithStatus;
     }
 
     // Get subscribed matches using storage functions
@@ -75,25 +142,6 @@ class CricketOrchestrator {
         }
     }
 
-    // Get live scores for all subscribed matches
-    async getLiveScoresForSubscribedMatches(subscribedMatches) {
-        const liveScores = [];
-        
-        for (const match of subscribedMatches) {
-            try {
-                if (match.status === 'live') {
-                    const liveScore = await getLiveScore(match.id);
-                    if (liveScore) {
-                        liveScores.push(liveScore);
-                    }
-                }
-            } catch (error) {
-                console.error(`Error getting live score for match ${match.id}:`, error);
-            }
-        }
-        
-        return liveScores;
-    }
 
     // Enhanced orchestration with Gemini AI (for future implementation)
     async orchestrateWithGemini() {

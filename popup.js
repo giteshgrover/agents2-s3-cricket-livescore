@@ -52,7 +52,7 @@ class CricketPopup {
             const result = await cricketOrchestrator.orchestrate();
             
             // Render matches
-            await this.renderMatches(result.subscribedMatches);
+            await this.renderMatches(result);
             
             // Hide loading states
             this.hideLoading('live');
@@ -64,51 +64,12 @@ class CricketPopup {
         }
     }
 
-    async renderMatches(subscribedMatches) {
-        // Get all matches (live and upcoming)
-        const allMatches = await getAllMatches();
-        
-        // Combine with subscription status
-        const liveMatchesWithStatus = await this.addSubscriptionStatus(allMatches.live);
-        const upcomingMatchesWithStatus = await this.addSubscriptionStatus(allMatches.upcoming);
-        
-        // Sort: subscribed matches first, then by time
-        const sortedLiveMatches = this.sortMatches(liveMatchesWithStatus);
-        const sortedUpcomingMatches = this.sortMatches(upcomingMatchesWithStatus);
-        
+    async renderMatches(result) {
         // Render match lists
-        this.renderMatchList('live-matches-list', sortedLiveMatches);
-        this.renderMatchList('upcoming-matches-list', sortedUpcomingMatches);
+        this.renderMatchList('live-matches-list', result.liveMatches);
+        this.renderMatchList('upcoming-matches-list', result.upcomingMatches);
     }
 
-    async addSubscriptionStatus(matches) {
-        const matchesWithStatus = [];
-        
-        for (const match of matches) {
-            const isSubscribed = await isMatchSubscribedFromStorage(match.id);
-            matchesWithStatus.push({
-                ...match,
-                isSubscribed
-            });
-        }
-        
-        return matchesWithStatus;
-    }
-
-    sortMatches(matches) {
-        return matches.sort((a, b) => {
-            // Subscribed matches first
-            if (a.isSubscribed && !b.isSubscribed) return -1;
-            if (!a.isSubscribed && b.isSubscribed) return 1;
-            
-            // Then by status (live first)
-            if (a.status === 'live' && b.status !== 'live') return -1;
-            if (a.status !== 'live' && b.status === 'live') return 1;
-            
-            // Then by time
-            return new Date(a.startTime) - new Date(b.startTime);
-        });
-    }
 
     renderMatchList(containerId, matches) {
         const container = document.getElementById(containerId);
@@ -179,7 +140,7 @@ class CricketPopup {
         try {
             if (match.isSubscribed) {
                 // Unsubscribe
-                const success = await unsubscribeFromMatchFromStorage(match.id);
+                const success = await cricketOrchestrator.unsubscribeMatch(match);
                 if (success) {
                     match.isSubscribed = false;
                     button.textContent = 'Subscribe';
@@ -193,7 +154,7 @@ class CricketPopup {
                 }
             } else {
                 // Subscribe
-                const success = await subscribeToMatchFromStorage(match.id, match);
+                const success = await cricketOrchestrator.subscribeMatch(match);
                 if (success) {
                     match.isSubscribed = true;
                     button.textContent = 'Subscribed';
@@ -216,6 +177,7 @@ class CricketPopup {
     }
 
     async selectMatch(matchId) {
+        console.log('Selected matchId - ', matchId);
         this.selectedMatchId = matchId;
         
         // Update UI to show selection
@@ -228,14 +190,15 @@ class CricketPopup {
             selectedElement.classList.add('selected');
         }
         
+        console.log('Displaying LiveScore for - ', matchId);
         // Load and display live score
         await this.displayLiveScore(matchId);
     }
 
     async displayLiveScore(matchId) {
         try {
-            const liveScore = await getLiveScore(matchId);
-            
+            const [liveScore] = await cricketOrchestrator.getLiveScoresForMatches([matchId]);
+            console.log('liveScore: ' + liveScore);
             if (liveScore) {
                 this.renderLiveScore(liveScore);
             } else {
