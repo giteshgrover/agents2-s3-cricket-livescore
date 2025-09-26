@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Cricket Live Scores & Subscriptions",
+  "version": "1.0",
+  "description": "Subscribe to cricket matches and get live scores",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Cricket Live Scores"
+  },
+  "icons": {
+    "16": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "128": "icons/icon.svg"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

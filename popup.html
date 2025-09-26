@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Live Scores</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏏 Cricket Live</h1>
+            <div class="refresh-btn" id="refreshBtn">🔄</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Section - Matches List -->
+            <div class="left-section">
+                <div class="section-header">
+                    <h2>Matches</h2>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="live">Live</button>
+                        <button class="tab-btn" data-tab="upcoming">Upcoming</button>
+                    </div>
+                </div>
+                
+                <div class="matches-container">
+                    <div class="tab-content active" id="live-matches">
+                        <div class="loading" id="live-loading">Loading live matches...</div>
+                        <div class="matches-list" id="live-matches-list"></div>
+                    </div>
+                    
+                    <div class="tab-content" id="upcoming-matches">
+                        <div class="loading" id="upcoming-loading">Loading upcoming matches...</div>
+                        <div class="matches-list" id="upcoming-matches-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Section - Live Scores -->
+            <div class="right-section">
+                <div class="section-header">
+                    <h2>Live Scores</h2>
+                </div>
+                
+                <div class="scores-container">
+                    <div class="no-selection" id="no-selection">
+                        <div class="no-selection-content">
+                            <div class="cricket-icon">🏏</div>
+                            <p>Select a subscribed match to view live scores</p>
+                        </div>
+                    </div>
+                    
+                    <div class="score-display" id="score-display" style="display: none;">
+                        <div class="match-info" id="match-info"></div>
+                        <div class="score-details" id="score-details"></div>
+                        <div class="match-status" id="match-status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="orchestrator.js"></script>
+    <script src="mockData.js"></script>
+    <script src="storage.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>
