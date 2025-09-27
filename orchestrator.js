@@ -40,7 +40,7 @@ class CricketOrchestrator {
             const liveScores = await this.getLiveScoresForMatches(subscribedMatches.filter(m => m.status === 'live').map(m => m.id));
             console.log(`⚡ Retrieved live scores for ${liveScores.length} matches`);
 
-            const allMatches = await getAllMatches();
+            const allMatches = await getAllMatches(this.config);
             console.log(`⚡ Retrieved all matches - ${allMatches.live.length} live matches and ${allMatches.upcoming.length} upcoming matches`);
 
             // Combine with subscription status

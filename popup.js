@@ -299,19 +299,18 @@ class CricketPopup {
     }
 
     formatMatchTime(startTime) {
+        console.log("startTime", startTime)
         const now = new Date();
-        const matchTime = new Date(startTime);
-        const diffMs = matchTime - now;
+        const matchTime = new Date(+startTime); // +str converts a string to num
+        console.log('matchTime', matchTime)
+        // const diffMs = matchTime - now;
+        // console.log('diffMs', diffMs)
         
-        if (diffMs < 0) {
+        if (matchTime < now) {
+            console.log('Started')
             return 'Started';
-        } else if (diffMs < 60 * 60 * 1000) {
-            const minutes = Math.floor(diffMs / (60 * 1000));
-            return `In ${minutes}m`;
-        } else if (diffMs < 24 * 60 * 60 * 1000) {
-            const hours = Math.floor(diffMs / (60 * 60 * 1000));
-            return `In ${hours}h`;
         } else {
+            console.log(matchTime.toLocaleDateString())
             return matchTime.toLocaleDateString();
         }
     }

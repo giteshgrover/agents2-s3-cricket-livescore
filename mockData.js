@@ -240,12 +240,12 @@ async function getAllMatches() {
 // Export functions for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        getLiveMatches,
-        getUpcomingMatches,
+        // getLiveMatches,
+        // getUpcomingMatches,
         getLiveScore,
-        getAllMatches,
-        mockLiveMatches,
-        mockUpcomingMatches,
+        // getAllMatches,
+        // mockLiveMatches,
+        // mockUpcomingMatches,
         mockLiveScores
     };
 }
