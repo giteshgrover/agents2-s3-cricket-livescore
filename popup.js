@@ -49,7 +49,9 @@ class CricketPopup {
             this.showLoading('upcoming');
 
             // Get all matches using orchestrator
-            const result = await cricketOrchestrator.orchestrate();
+            // const result = await cricketOrchestrator.orchestrate();
+            const result = await cricketOrchestrator.orchestrateWithGemini();
+            console.log("result from cricketOrchestrator", result)
             
             // Render matches
             await this.renderMatches(result);

@@ -1,14 +1,56 @@
 // Function to get all matches (both live and upcoming)
 async function getAllMatches(config) {
-    const [liveMatches, upcomingMatches] = await Promise.all([
-        getLiveMatches(config),
-        getUpcomingMatches(config)
-    ]);
+    // var [liveMatches, upcomingMatches] = await Promise.all([
+    //     getLiveMatches(config),
+    //     getUpcomingMatches(config)
+    // ]);
 
+    // // TODO Limit the numbers for LLM 
+    // if (liveMatches.length > 3) {
+    //     liveMatches = liveMatches[0, 3]
+    // }
+    // if (upcomingMatches.length > 3) {
+    //     upcomingMatches = upcomingMatches[0,3]
+    // }
+
+    // return {
+    //     live: liveMatches,
+    //     upcoming: upcomingMatches
+    // };
+
+    // TODO
     return {
-        live: liveMatches,
-        upcoming: upcomingMatches
-    };
+        "live": {
+            "id": 113661,
+            "series": "County Championship Division Two 2025",
+            "match": "54th Match",
+            "matchType": "TEST",
+            "status": "live",
+            "team1": "Derbyshire",
+            "team2": "Kent",
+            "currentScore": {
+                "team1": "698/6 (144.6)",
+                "team2": "271/10 (85.4)"
+            },
+            "venue": "St Lawrence Ground, Canterbury",
+            "startTime": "1758706200000"
+        },
+        "upcoming": {
+            "id": 117359,
+            "series": "West Indies tour of India, 2025",
+            "match": "1st Test",
+            "matchType": "TEST",
+            "status": "upcoming",
+            "team1": "India",
+            "team2": "West Indies",
+            "currentScore": {
+                "team1": "",
+                "team2": ""
+            },
+            "venue": "Narendra Modi Stadium, Ahmedabad",
+            "startTime": "1759377600000"
+        }
+    }
 }
 
 async function getLiveMatches(config) {
