@@ -14,16 +14,25 @@ async function getAllMatches(config) {
 async function getLiveMatches(config) {
     console.log('In getLiveMatches')
     const apiResponse = await callExternalAPI(config, "matches/v1/live");
-    return transformApiResponse(apiResponse, 'live');
+    return transformMatchApiResponse(apiResponse, 'live');
 }
 async function getUpcomingMatches(config) {
     console.log('In getUpcomingMatches')
     const apiResponse = await callExternalAPI(config, "matches/v1/upcoming");
-    return transformApiResponse(apiResponse, 'upcoming');
+    return transformMatchApiResponse(apiResponse, 'upcoming');
 }
 
-function transformApiResponse(data, status) {
-    console.log('In transformApiResponse - ', data)
+async function getLiveScore(config, matchId) {
+
+    console.log('In getLiveScore for matchId', matchId)
+    const apiResponse = await callExternalAPI(config, `mcenter/v1/${matchId}/scard`);
+    return transformScoreApiResponse(apiResponse, matchId);
+
+}
+
+
+function transformMatchApiResponse(data, status) {
+    console.log('In transformMatchApiResponse - ', data)
     let result = [];
 
     data.typeMatches.forEach(typeMatch => {
@@ -85,7 +94,56 @@ function transformApiResponse(data, status) {
     return result;
 }
 
+function transformScoreApiResponse(data, matchId) {
+    console.log('In transformScoreApiResponse - ', data)
 
+    const matchKey = `${matchId}`
+
+    // the API response may have multiple scorecards (innings)
+    if (!data.scorecard) return result;
+
+    // assume one match per response (scorecard has multiple innings)
+    const innings = data.scorecard;
+
+    // team names
+    const team1 = innings[0]?.batteamname || "Team 1";
+    const team2 = innings[1]?.batteamname || "Team 2";
+
+    // figure out which team is currently batting (last innings usually)
+    const currentInnings = innings.length;
+    const battingTeam = innings[currentInnings - 1]?.batteamname;
+
+    // build scores array
+    const scores = innings.map(inn => ({
+        team: inn.batteamname,
+        runs: inn.score,
+        wickets: inn.wickets,
+        overs: parseFloat(inn.overs),
+        isBatting: inn.batteamname === battingTeam
+    }));
+
+    // compute CRR
+    const battingInnings = innings[currentInnings - 1];
+    const currentRunRate = battingInnings && battingInnings.overs > 0
+        ? +(battingInnings.score / battingInnings.overs).toFixed(2)
+        : null;
+
+    const result = {
+        matchId: matchKey,
+        team1,
+        team2,
+        venue: data.venue || "Unknown Venue",
+        status: `${battingTeam} batting - ${currentInnings} Innings`,
+        currentInnings,
+        scores,
+        lastUpdated: new Date(),
+        requiredRunRate: null, // need target/overs left to compute
+        currentRunRate
+    };
+
+    console.log("live Score: ", result)
+    return result;
+}
 
 async function callExternalAPI(config, endpoint, params) {
     // teams/v1/international
@@ -96,6 +154,7 @@ async function callExternalAPI(config, endpoint, params) {
     if (params) {
         fullUrl += `?${queryString}`;
     }
+    console.log(fullUrl)
 
     // Call API
     try {
@@ -110,12 +169,15 @@ async function callExternalAPI(config, endpoint, params) {
 
         // Check if the request was successful (status code 200-299)
         if (!response.ok) {
+            console.error(response)
             throw new Error("Network response was not ok " + response.statusText);
         }
 
+        console.log("response ok", response)
         // Parse the JSON response
         const data = await response.json();
 
+        console.log("data", data)
         // Return the fetched data
         return data;
     } catch (error) {
@@ -132,6 +194,7 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         getLiveMatches,
         getUpcomingMatches,
-        getAllMatches
+        getAllMatches,
+        getLiveScore
     };
 }

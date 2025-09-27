@@ -299,18 +299,14 @@ class CricketPopup {
     }
 
     formatMatchTime(startTime) {
-        console.log("startTime", startTime)
         const now = new Date();
         const matchTime = new Date(+startTime); // +str converts a string to num
-        console.log('matchTime', matchTime)
         // const diffMs = matchTime - now;
         // console.log('diffMs', diffMs)
         
         if (matchTime < now) {
-            console.log('Started')
             return 'Started';
         } else {
-            console.log(matchTime.toLocaleDateString())
             return matchTime.toLocaleDateString();
         }
     }

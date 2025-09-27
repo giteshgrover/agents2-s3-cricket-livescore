@@ -7,6 +7,9 @@
     "storage",
     "activeTab"
   ],
+  "host_permissions": [
+    "https://cricbuzz-cricket.p.rapidapi.com/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_title": "Cricket Live Scores"

@@ -71,7 +71,7 @@ class CricketOrchestrator {
         
         for (const liveMatchId of liveMatchIds) {
             try {
-                const liveScore = await getLiveScore(liveMatchId);
+                const liveScore = await getLiveScore(this.config,liveMatchId);
                 if (liveScore) {
                     liveScores.push(liveScore);
                 }
