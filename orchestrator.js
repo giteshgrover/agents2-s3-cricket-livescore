@@ -127,12 +127,11 @@ class CricketOrchestrator {
                         liveScores,
                         timestamp: date in ISO string format
                     }
-                    while function_name is one of the following (Don't forget that if more than one parameters need to be passed in, they MUST BE separated by '|' and NOT ',' when calling the function):
+                    while function_name is one of the following (Don't forget that if more than one parameters need to be passed in, they MUST BE separated by '|' and NOT ',' when calling the function. Also, when calling, function name shouldn't have any parenthesis or brackets. ):
                     ${this.functions_description()}
                     `;
 
             const query = `Fetch, prepare and return the list of live matches and upcoming messages with info including status but not limited to (live or upcoming), venue, team1, team2, isSubscribed, etc. 
-            This list should be sorted in the order of subscription. 
             Also, return the list of live scores for all the matches that user has subscribed to. 
             Also, add the current date in ISO format`;
 
@@ -170,6 +169,8 @@ class CricketOrchestrator {
                     iterationResponses.push(`In the ${iteration + 1} iteration you called ${funcName} with ${params} parameters, and the function returned ${JSON.stringify(funcResult, null, 2)}.`)
                 }
                 iteration += 1
+                // delay for Gemini to not exhaust limit
+                await new Promise(resolve => setTimeout(resolve, 5000+ iteration*10));
             }
 
 
